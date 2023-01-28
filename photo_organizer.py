@@ -1,9 +1,13 @@
 import os
 import shutil
 from datetime import datetime
+import sys
 
 # specify the path to the directory containing the photos
 directory = '/Users/brettkohler/Pictures'
+
+if len(sys.argv) == 2:
+	directory = sys.argv[1]
 
 def get_all_files(directory):
 	all_files = []
@@ -21,6 +25,10 @@ def file_already_in_directory(file, directory):
 # get a list of all files in the directory
 files = get_all_files(directory)
 
+if len(files) == 0:
+	print("=== The directory you have provided is empty or does not exist")
+	exit
+
 # iterate through the list of files
 for file in files:
 	# check if the file is a photo (assumes jpeg file format)
@@ -33,12 +41,9 @@ for file in files:
 
 		# convert the timestamp to a datetime object
 		date = datetime.fromtimestamp(timestamp)
-		print(date)
 
 		# extract the year from the datetime object
 		year = str(date.year)
-		if year == 2012:
-			print(file)
 
 		# get the path to the correct year directory and path to file
 		yearDir = os.path.join(directory, year)
