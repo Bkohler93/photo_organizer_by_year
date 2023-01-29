@@ -50,7 +50,7 @@ count = 0
 # iterate through the list of files
 for file in files:
 	# check if the file is a photo (assumes jpeg file format)
-	if file.endswith('.jpeg') or file.endswith('.jpg') or file.endswith('.png'):
+	if file.lower().endswith('.jpeg') or file.endswith('.jpg') or file.endswith('.png'):
 
 		# get full file path
 		filePath = os.path.join(directory, file)
@@ -59,7 +59,7 @@ for file in files:
 		try:
 			timestamp = os.path.getmtime(filePath)
 		except:
-			print("Error, skipping file :(")
+			print("Error, skipping on from line 60 :(")
 			continue
 
 		# convert the timestamp to a datetime object
@@ -74,9 +74,9 @@ for file in files:
 		# create a folder for the current year (if it doesn't already exist)
 		if not os.path.exists(yearDir):
 			os.makedirs(yearDir)
-		# elif file_already_in_directory(file, yearDir):
-		# 	# print(file + " already exists in directory\t" + yearDir)
-		# 	continue
+		elif file_already_in_directory(file, yearDir):
+			# print(file + " already exists in directory\t" + yearDir)
+			continue
 		
 		# create file path that matches new year directory
 		filePathYearDir = os.path.join(yearDir, file)
@@ -89,7 +89,7 @@ for file in files:
 				uniqueFilePath = os.path.join(directory, uniqify(file, yearDir))
 				print(uniqueFilePath)
 			except:
-				print("Error, skipping file :(")
+				print("Error, skipping file from line 88-90 :(")
 				continue
 
 		# move the file to the corresponding year folder
@@ -99,7 +99,7 @@ for file in files:
 				os.rename(filePath, uniqueFilePath)
 				shutil.move(uniqueFilePath, yearDir)
 			except:
-				print("Error, skipping file :(")
+				print("Error, skipping file from line 99-100 :(")
 				continue
 		else:
 			# change modified date to 'date' saved above
