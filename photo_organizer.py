@@ -4,10 +4,8 @@ from datetime import datetime
 import sys
 
 # specify the path to the directory containing the photos
-directory = '/Users/brettkohler/PicturesTest'
-outDirectory = '/Users/brettkohler/PicturesTest/out'
-# directory = input('Enter the directory path where your photos are located within.\nFormatted like: /Users/brettkohler/Pictures\nDirectory path: ')
-# outDirectory = input('Enter the directory path where the photos will be placed\nDirectory path: ')
+directory = input('Enter the directory path where your photos are located within.\nFormatted like: /Users/brettkohler/Pictures\nDirectory path: ')
+outDirectory = input('Enter the directory path where the photos will be placed\nDirectory path: ')
 
 # get all files within a given directory recursively
 def get_all_files(directory):
@@ -71,8 +69,9 @@ count = 0
 # iterate through the list of files
 for file in files:
 
+	file = file.lower()
 	# check if the file is a photo (assumes jpeg file format)
-	if file.lower().endswith('.jpeg') or file.endswith('.jpg') or file.endswith('.png'):
+	if file.endswith('.jpeg') or file.endswith('.jpg') or file.endswith('.png'):
 
 		# get full file path
 		filePath = os.path.join(directory, file)
