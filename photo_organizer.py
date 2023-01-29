@@ -5,7 +5,9 @@ import sys
 
 # specify the path to the directory containing the photos
 directory = '/Users/brettkohler/PicturesTest'
+outDirectory = '/Users/brettkohler/PicturesTest/out'
 # directory = input('Enter the directory path where your photos are located within.\nFormatted like: /Users/brettkohler/Pictures\nDirectory path: ')
+# outDirectory = input('Enter the directory path where the photos will be placed\nDirectory path: ')
 
 # get all files within a given directory recursively
 def get_all_files(directory):
@@ -26,12 +28,18 @@ def file_already_in_directory(file, directory):
 def file_is_image(file):
 	return file.endswith('.jpeg') or file.endswith('.jpg') or file.endswith('.png')
 
+def extract_file_name(path):
+	return path[path.rfind('/') + 1:]
+
+def extract_dir_path_from_file(path):
+	return path[:path.rfind('/')]
+
 # continue to edit file until the file would be unique within yearDir
 def uniqify(file, yearDir):
 		counter = 0
-		print(file)
+		
 		# extract only file name without path
-		file = file[file.rfind('/') + 1:]
+		file = extract_file_name(file)
 
 		dotIdx = file.find('.')
 
@@ -45,6 +53,9 @@ def uniqify(file, yearDir):
 			counter += 1
 		formatFileName = formatFileName.format(counter)
 		return formatFileName
+
+def dir_empty(dir_path):
+	return not any((True for _ in os.scandir(dir_path)))
 
 
 # get a list of all files in the directory
@@ -80,7 +91,15 @@ for file in files:
 		year = str(date.year)
 
 		# get the path to the correct year directory and path to file
-		yearDir = os.path.join(directory, year)
+		yearDir = os.path.join(outDirectory, year)
+
+		# create outDirectory if not created
+		if not os.path.exists(outDirectory):
+			try:
+				os.makedirs(outDirectory)
+			except:
+				print("Failed to create output directory, check to make sure you entered the correct directory name")
+				exit()
 
 		# create a folder for the current year (if it doesn't already exist)
 		if not os.path.exists(yearDir):
@@ -116,5 +135,13 @@ for file in files:
 
 		# increment counter
 		count += 1
+
+		# extract directory without filename
+		dir = extract_dir_path_from_file(file)
+
+		# if directory of current file is now empty delete it
+		if dir_empty(dir):
+			os.rmdir(dir)
+			
 
 print("Done: Moved " + str(count) + " images")
