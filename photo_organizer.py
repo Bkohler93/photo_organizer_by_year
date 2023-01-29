@@ -81,15 +81,17 @@ for file in files:
 		# append number if filename exists in yearDir
 		if os.path.isfile(filePathYearDir):
 			isChanged = True
-			print("copy found")
 			uniqueFilePath = os.path.join(directory, uniqify(file, yearDir))
 			print(uniqueFilePath)
 
 		# move the file to the corresponding year folder
 		if isChanged == True:
-			# rename file in filePath to newFilePath
-			os.rename(filePath, uniqueFilePath)
-			shutil.move(uniqueFilePath, yearDir)
+			# rename file in filePath to newFilePath	
+			try:
+				os.rename(filePath, uniqueFilePath)
+				shutil.move(uniqueFilePath, yearDir)
+			except:
+				print("Unable to copy file due to long ass filename")
 		else:
 			# change modified date to 'date' saved above
 			shutil.move(filePath, yearDir)
