@@ -4,8 +4,8 @@ from datetime import datetime
 import sys
 
 # specify the path to the directory containing the photos
-directory = '/Users/brettkohler/Pictures'
-directory = input('Enter the directory path where your photos are located within.\nFormatted like: /Users/brettkohler/Pictures\nDirectory path: ')
+directory = '/Users/brettkohler/PicturesTest'
+# directory = input('Enter the directory path where your photos are located within.\nFormatted like: /Users/brettkohler/Pictures\nDirectory path: ')
 
 # get all files within a given directory recursively
 def get_all_files(directory):
@@ -29,13 +29,23 @@ def file_is_image(file):
 # continue to edit file until the file would be unique within yearDir
 def uniqify(file, yearDir):
 		counter = 0
+		print(file)
+		# extract only file name without path
+		file = file[file.rfind('/') + 1:]
+
 		dotIdx = file.find('.')
-		formatFileName = file[:dotIdx] + '{}' + file[dotIdx:]
+
+		if file[dotIdx-2] == '_':
+			dotIdx -= 1
+			formatFileName = file[:dotIdx] + '{}' + file[dotIdx + 1:]
+		else:
+			formatFileName = file[:dotIdx] + '_{}' + file[dotIdx:]
+
 		while os.path.isfile(os.path.join(yearDir, formatFileName.format(counter))):
 			counter += 1
 		formatFileName = formatFileName.format(counter)
 		return formatFileName
-			
+
 
 # get a list of all files in the directory
 files = get_all_files(directory)
@@ -49,6 +59,7 @@ count = 0
 
 # iterate through the list of files
 for file in files:
+
 	# check if the file is a photo (assumes jpeg file format)
 	if file.lower().endswith('.jpeg') or file.endswith('.jpg') or file.endswith('.png'):
 
@@ -59,7 +70,7 @@ for file in files:
 		try:
 			timestamp = os.path.getmtime(filePath)
 		except:
-			print("Error, skipping on from line 60 :(")
+			print("Error, skipping on from line 75 :(")
 			continue
 
 		# convert the timestamp to a datetime object
@@ -74,32 +85,30 @@ for file in files:
 		# create a folder for the current year (if it doesn't already exist)
 		if not os.path.exists(yearDir):
 			os.makedirs(yearDir)
-		elif file_already_in_directory(file, yearDir):
-			# print(file + " already exists in directory\t" + yearDir)
+
+		# move to next file if current file already in correct directory	
+		if file_already_in_directory(file, yearDir):
 			continue
 		
 		# create file path that matches new year directory
 		filePathYearDir = os.path.join(yearDir, file)
+
+		#
 		isChanged = False
 
-		# append number if filename exists in yearDir
+		# append number if a copy exists with same name in yearDir
 		if os.path.isfile(filePathYearDir):
 			try:
 				isChanged = True
-				uniqueFilePath = os.path.join(directory, uniqify(file, yearDir))
-				print(uniqueFilePath)
-			except:
-				print("Error, skipping file from line 88-90 :(")
-				continue
 
-		# move the file to the corresponding year folder
-		if isChanged == True:
-			# rename file in filePath to newFilePath	
-			try:
+				# create new file name with appended number to make it unique to other copies
+				uniqueFilePath = os.path.join(directory, uniqify(file, yearDir))
 				os.rename(filePath, uniqueFilePath)
+
+				# rename file to new unique file path
 				shutil.move(uniqueFilePath, yearDir)
 			except:
-				print("Error, skipping file from line 99-100 :(")
+				print("Error, skipping file from line 96-99 :(")
 				continue
 		else:
 			# change modified date to 'date' saved above
