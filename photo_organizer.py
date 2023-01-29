@@ -60,6 +60,7 @@ for file in files:
 			timestamp = os.path.getmtime(filePath)
 		except:
 			print("Cannot copy file with spaces in it :(")
+			continue
 
 		# convert the timestamp to a datetime object
 		date = datetime.fromtimestamp(timestamp)
