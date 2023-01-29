@@ -26,6 +26,17 @@ def file_already_in_directory(file, directory):
 def file_is_image(file):
 	return file.endswith('.jpeg') or file.endswith('.jpg') or file.endswith('.png')
 
+# continue to edit file until the file would be unique within yearDir
+def uniqify(file, yearDir):
+		counter = 0
+		dotIdx = file.find('.')
+		formatFileName = file[:dotIdx] + '{}' + file[dotIdx:]
+		while os.path.isfile(os.path.join(yearDir, formatFileName.format(counter))):
+			counter += 1
+		formatFileName = formatFileName.format(counter)
+		return formatFileName
+			
+
 # get a list of all files in the directory
 files = get_all_files(directory)
 
@@ -41,7 +52,7 @@ for file in files:
 	# check if the file is a photo (assumes jpeg file format)
 	if file.endswith('.jpeg') or file.endswith('.jpg') or file.endswith('.png'):
 
-		# get file path and directory
+		# get full file path
 		filePath = os.path.join(directory, file)
 
 		# get the file's creation time
@@ -62,9 +73,26 @@ for file in files:
 		elif file_already_in_directory(file, yearDir):
 			# print(file + " already exists in directory\t" + yearDir)
 			continue
-			
+		
+		# create file path that matches new year directory
+		filePathYearDir = os.path.join(yearDir, file)
+		isChanged = False
+
+		# append number if filename exists in yearDir
+		if os.path.isfile(filePathYearDir):
+			isChanged = True
+			print("copy found")
+			uniqueFilePath = os.path.join(directory, uniqify(file, yearDir))
+			print(uniqueFilePath)
+
 		# move the file to the corresponding year folder
-		shutil.move(filePath, yearDir)
+		if isChanged == True:
+			# rename file in filePath to newFilePath
+			os.rename(filePath, uniqueFilePath)
+			shutil.move(uniqueFilePath, yearDir)
+		else:
+			# change modified date to 'date' saved above
+			shutil.move(filePath, yearDir)
 
 		# increment counter
 		count += 1
