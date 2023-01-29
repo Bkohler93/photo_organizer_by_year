@@ -59,7 +59,7 @@ for file in files:
 		try:
 			timestamp = os.path.getmtime(filePath)
 		except:
-			print("Cannot copy file with spaces in it :(")
+			print("Error, skipping file :(")
 			continue
 
 		# convert the timestamp to a datetime object
@@ -74,9 +74,9 @@ for file in files:
 		# create a folder for the current year (if it doesn't already exist)
 		if not os.path.exists(yearDir):
 			os.makedirs(yearDir)
-		elif file_already_in_directory(file, yearDir):
-			# print(file + " already exists in directory\t" + yearDir)
-			continue
+		# elif file_already_in_directory(file, yearDir):
+		# 	# print(file + " already exists in directory\t" + yearDir)
+		# 	continue
 		
 		# create file path that matches new year directory
 		filePathYearDir = os.path.join(yearDir, file)
@@ -84,9 +84,13 @@ for file in files:
 
 		# append number if filename exists in yearDir
 		if os.path.isfile(filePathYearDir):
-			isChanged = True
-			uniqueFilePath = os.path.join(directory, uniqify(file, yearDir))
-			print(uniqueFilePath)
+			try:
+				isChanged = True
+				uniqueFilePath = os.path.join(directory, uniqify(file, yearDir))
+				print(uniqueFilePath)
+			except:
+				print("Error, skipping file :(")
+				continue
 
 		# move the file to the corresponding year folder
 		if isChanged == True:
@@ -95,7 +99,8 @@ for file in files:
 				os.rename(filePath, uniqueFilePath)
 				shutil.move(uniqueFilePath, yearDir)
 			except:
-				print("Unable to copy file due to long ass filename")
+				print("Error, skipping file :(")
+				continue
 		else:
 			# change modified date to 'date' saved above
 			shutil.move(filePath, yearDir)
