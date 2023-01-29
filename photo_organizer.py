@@ -69,9 +69,8 @@ count = 0
 # iterate through the list of files
 for file in files:
 
-	file = file.lower()
 	# check if the file is a photo (assumes jpeg file format)
-	if file.endswith('.jpeg') or file.endswith('.jpg') or file.endswith('.png'):
+	if file.lower().endswith('.jpeg') or file.lower().endswith('.jpg') or file.lower().endswith('.png'):
 
 		# get full file path
 		filePath = os.path.join(directory, file)
